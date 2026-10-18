@@ -205,16 +205,27 @@
         </header>
 
         <!-- Admin Unlocked Banner (Only visible after entering PIN 12705854) -->
-        <div id="editModeBanner" class="hidden bg-gradient-to-r from-amber-500/25 via-amber-400/15 to-emerald-500/25 border-b border-amber-400/40 px-3.5 py-2.5 text-xs flex items-center justify-between gap-2 relative z-30">
-            <div class="flex items-center gap-2 text-amber-200 min-w-0">
-                <i data-lucide="shield-check" class="w-4 h-4 text-[#10B981] shrink-0"></i>
-                <span class="truncate text-[11px]"><strong>Admin Unlocked</strong> • Tap any photo to swap</span>
+        <div id="editModeBanner" class="hidden bg-gradient-to-b from-amber-500/25 via-amber-400/15 to-emerald-500/20 border-b border-amber-400/40 px-3.5 py-2.5 text-xs space-y-2 relative z-30">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5 text-amber-200 min-w-0">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-[#10B981] shrink-0"></i>
+                    <span class="truncate text-[11px]"><strong>Admin Unlocked</strong> • Auto-saves on refresh</span>
+                </div>
+                <span id="storageSavedPill" class="px-2 py-0.5 rounded-full bg-[#10B981]/20 border border-[#10B981]/40 text-[#10B981] font-bold text-[10px] shrink-0">
+                    Local Saved ✓
+                </span>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-                <button onclick="openExportCodeSheet()" class="px-2.5 py-1 rounded-full bg-[#D4AF37] text-black font-extrabold text-[10px] shadow">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+                <button onclick="downloadUpdatedIndexHtml()" class="shrink-0 px-3 py-1.5 rounded-full bg-[#10B981] text-black font-extrabold text-[10px] flex items-center gap-1 shadow">
+                    <i data-lucide="download" class="w-3 h-3"></i> Download index.html (GitHub)
+                </button>
+                <button onclick="openExportCodeSheet()" class="shrink-0 px-2.5 py-1.5 rounded-full bg-[#D4AF37] text-black font-extrabold text-[10px] shadow">
                     Copy Config
                 </button>
-                <button onclick="lockAdminSession()" class="px-2.5 py-1 rounded-full bg-red-500/20 border border-red-400/40 text-red-200 font-bold text-[10px]">
+                <button onclick="resetAllSavedPhotos()" class="shrink-0 px-2.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-zinc-200 font-semibold text-[10px]">
+                    Reset All
+                </button>
+                <button onclick="lockAdminSession()" class="shrink-0 px-2.5 py-1.5 rounded-full bg-red-500/20 border border-red-400/40 text-red-200 font-bold text-[10px] ml-auto">
                     Lock
                 </button>
             </div>
@@ -672,19 +683,34 @@
     <!-- Hidden File Input for Camera Roll / Local File Upload -->
     <input type="file" id="cameraRollInput" accept="image/*" class="hidden">
 
+    <!-- Floating Toast Notification for Auto-Save Feedback -->
+    <div id="saveToast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
+        <div class="px-4 py-2 rounded-full bg-[#10B981] text-black font-extrabold text-xs shadow-2xl flex items-center gap-1.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            <span id="saveToastText">Saved to Browser Storage ✓</span>
+        </div>
+    </div>
+
     <!-- =====================================================================
          APPLICATION SCRIPT & CENTRALIZED `SITE_IMAGES` OBJECT
     ====================================================================== -->
     <script>
         /**
          * ============================================================================
-         * 1. CENTRALIZED `SITE_IMAGES` CONFIGURATION OBJECT
+         * 1. CENTRALIZED `SITE_IMAGES` CONFIGURATION & LOCALSTORAGE PERSISTENCE
          * ============================================================================
-         * AI Web Builders & Developers: Replace any URL below with your own uploaded
-         * project image path (e.g., "./images/hero.jpg") or tap "Swap Photos" in the
-         * top mobile bar to replace photos live from your phone camera roll.
+         * - `DEFAULT_SITE_IMAGES` holds the baseline fallback photos.
+         * - Whenever you swap an image (URL or Camera Roll) using Admin PIN 12705854,
+         *   it automatically saves into `localStorage` ('afghan_culture_day_images_v1')
+         *   so refreshing your browser or localhost keeps all your photos intact!
+         * - Use "Download index.html (GitHub)" in the Admin bar to download a ready-to-commit
+         *   HTML file with your custom photos baked directly into `DEFAULT_SITE_IMAGES`
+         *   so every student scanning your GitHub Pages QR code sees them on their phone.
          */
-        const SITE_IMAGES = {
+        const STORAGE_KEY = 'afghan_culture_day_images_v1';
+
+        /* __START_SITE_IMAGES__ */
+        const DEFAULT_SITE_IMAGES = {
             heroBg: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
             historyMain: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shrine_of_Ali_Mazar.jpg/1280px-Shrine_of_Ali_Mazar.jpg",
 
@@ -731,10 +757,72 @@
                 lapisLazuli: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80"
             }
         };
+        /* __END_SITE_IMAGES__ */
+
+        // Deep merge helper so saved localStorage images safely override DEFAULT_SITE_IMAGES
+        function deepMergeImages(target, source) {
+            const output = JSON.parse(JSON.stringify(target));
+            if (!source || typeof source !== 'object') return output;
+            Object.keys(source).forEach(key => {
+                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                    output[key] = deepMergeImages(target[key] || {}, source[key]);
+                } else if (typeof source[key] === 'string' && source[key].trim() !== '') {
+                    output[key] = source[key];
+                }
+            });
+            return output;
+        }
+
+        function loadInitialSiteImages() {
+            try {
+                const rawSaved = localStorage.getItem(STORAGE_KEY);
+                if (rawSaved) {
+                    const parsed = JSON.parse(rawSaved);
+                    return deepMergeImages(DEFAULT_SITE_IMAGES, parsed);
+                }
+            } catch (err) {
+                console.warn('Could not read saved images from localStorage:', err);
+            }
+            return JSON.parse(JSON.stringify(DEFAULT_SITE_IMAGES));
+        }
+
+        // Initialize active SITE_IMAGES immediately before any section renders
+        let SITE_IMAGES = loadInitialSiteImages();
+
+        function saveSiteImagesToStorage(toastMsg) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(SITE_IMAGES));
+                showSaveToast(toastMsg || 'Saved to Browser Storage ✓');
+                return true;
+            } catch (err) {
+                console.warn('localStorage quota warning:', err);
+                showSaveToast('Storage Full • Use Image URL or Download HTML');
+                return false;
+            }
+        }
+
+        let toastTimer = null;
+        function showSaveToast(message) {
+            const toast = document.getElementById('saveToast');
+            const text = document.getElementById('saveToastText');
+            if (!toast || !text) return;
+            text.textContent = message;
+            toast.classList.remove('opacity-0', '-translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2600);
+        }
 
         // Helper functions to read/write nested keys in SITE_IMAGES
         function getImgUrl(keyPath) {
             return keyPath.split('.').reduce((acc, part) => (acc && acc[part] !== undefined) ? acc[part] : '', SITE_IMAGES);
+        }
+
+        function getDefaultImgUrl(keyPath) {
+            return keyPath.split('.').reduce((acc, part) => (acc && acc[part] !== undefined) ? acc[part] : '', DEFAULT_SITE_IMAGES);
         }
 
         function setImgUrl(keyPath, url) {
@@ -1451,13 +1539,18 @@
             }
             activeCustomizingKey = keyPath;
             const currentUrl = getImgUrl(keyPath);
+            const defaultUrl = getDefaultImgUrl(keyPath);
+            const isModified = currentUrl !== defaultUrl;
             const sheetBody = document.getElementById('bottomSheetBody');
 
             sheetBody.innerHTML = `
-                <div class="space-y-4">
+                <div class="space-y-3.5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#D4AF37]">Mobile Image Customizer</div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#D4AF37]">Mobile Image Customizer</span>
+                                ${isModified ? '<span class="px-2 py-0.5 rounded-full bg-[#10B981]/20 text-[#10B981] text-[9px] font-extrabold">Custom Saved ✓</span>' : ''}
+                            </div>
                             <h3 class="font-display font-extrabold text-lg text-white">${label}</h3>
                             <div class="text-[11px] text-zinc-400 font-mono">SITE_IMAGES.${keyPath}</div>
                         </div>
@@ -1466,35 +1559,45 @@
                         </button>
                     </div>
 
-                    <div class="h-40 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10">
+                    <div class="h-40 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 relative">
                         <img id="sheetPreviewImg" src="${currentUrl}" alt="Preview" class="w-full h-full object-cover">
+                        <div id="sheetSavedBadge" class="hidden absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-[#10B981] text-black font-extrabold text-[10px] shadow-lg">
+                            Saved to Browser Storage ✓
+                        </div>
                     </div>
 
-                    <!-- Option 1: Pick from Phone Camera Roll -->
-                    <button onclick="document.getElementById('cameraRollInput').click()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg">
+                    <!-- Option 1: Pick from Phone Camera Roll (Auto-Compressed & Saved) -->
+                    <button onclick="document.getElementById('cameraRollInput').click()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg active:scale-95 transition">
                         <i data-lucide="image-plus" class="w-4 h-4"></i>
-                        <span>Choose Photo from Phone Camera Roll</span>
+                        <span>Upload from Phone / PC (Auto-Saves)</span>
                     </button>
 
                     <!-- Option 2: Paste Image URL or Local Path -->
                     <div class="space-y-1.5">
-                        <label class="text-[11px] font-semibold text-zinc-300">Or Paste Image URL / Project Path (e.g. <code class="text-[#D4AF37]">./images/my-photo.jpg</code>):</label>
+                        <label class="text-[11px] font-semibold text-zinc-300">Or Paste Direct Image URL / GitHub Repo Path (e.g. <code class="text-[#D4AF37]">./images/my-photo.jpg</code>):</label>
                         <div class="flex gap-2">
                             <input id="customUrlInput" type="text" value="${currentUrl.startsWith('data:') ? '' : currentUrl}" placeholder="https://... or ./images/photo.jpg"
                                    class="flex-1 px-3.5 py-2.5 rounded-xl bg-black border border-white/15 text-xs text-white focus:outline-none focus:border-[#D4AF37]">
-                            <button onclick="applyCustomUrlInput()" class="px-4 py-2.5 rounded-xl bg-white/15 text-white font-bold text-xs">
-                                Apply
+                            <button onclick="applyCustomUrlInput()" class="px-4 py-2.5 rounded-xl bg-[#10B981] text-black font-extrabold text-xs active:scale-95 transition">
+                                Save URL
                             </button>
                         </div>
                     </div>
 
-                    <div class="pt-2 border-t border-white/10 flex justify-between items-center">
-                        <button onclick="openExportCodeSheet()" class="text-xs font-bold text-[#D4AF37] underline">
-                            Copy Updated SITE_IMAGES Code
-                        </button>
-                        <button onclick="closeBottomSheet()" class="px-4 py-2 rounded-xl bg-white/5 text-xs text-zinc-300">
-                            Done
-                        </button>
+                    <!-- GitHub Pages Permanent Export Callout -->
+                    <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/10 space-y-2">
+                        <div class="text-[11px] text-zinc-300 leading-relaxed">
+                            <strong class="text-[#10B981]">✓ Refresh Safe:</strong> Your photo is now saved in this browser's storage. To make it live for <strong>all other students scanning your GitHub Pages QR code</strong>, tap below to download the updated <code class="text-[#D4AF37]">index.html</code> and upload it to GitHub:
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="downloadUpdatedIndexHtml()" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-[11px] font-extrabold text-[#D4AF37] flex items-center justify-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Download Updated index.html</span>
+                            </button>
+                            <button onclick="resetSinglePhotoToDefault()" class="px-3 py-2.5 rounded-xl bg-red-500/15 border border-red-400/30 text-[11px] font-bold text-red-200">
+                                Reset Photo
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1506,29 +1609,114 @@
         function applyCustomUrlInput() {
             const val = document.getElementById('customUrlInput')?.value.trim();
             if (!val || !activeCustomizingKey) return;
-            updateImageEverywhere(activeCustomizingKey, val);
-            closeBottomSheet();
+            updateImageEverywhere(activeCustomizingKey, val, 'URL Saved to Browser Storage ✓');
+            const preview = document.getElementById('sheetPreviewImg');
+            if (preview) preview.src = val;
+            const badge = document.getElementById('sheetSavedBadge');
+            if (badge) badge.classList.remove('hidden');
         }
 
-        document.getElementById('cameraRollInput').addEventListener('change', function(e) {
+        function resetSinglePhotoToDefault() {
+            if (!activeCustomizingKey) return;
+            const defaultUrl = getDefaultImgUrl(activeCustomizingKey);
+            updateImageEverywhere(activeCustomizingKey, defaultUrl, 'Reset to Default Photo ✓');
+            const preview = document.getElementById('sheetPreviewImg');
+            if (preview) preview.src = defaultUrl;
+            const input = document.getElementById('customUrlInput');
+            if (input) input.value = defaultUrl;
+        }
+
+        function resetAllSavedPhotos() {
+            if (!isAdminAuthenticated) return;
+            localStorage.removeItem(STORAGE_KEY);
+            SITE_IMAGES = JSON.parse(JSON.stringify(DEFAULT_SITE_IMAGES));
+            initStaticMobileImages();
+            renderLandmarksCarousel();
+            renderMobileFoods();
+            renderCultureBento();
+            renderArtistsCarousel();
+            renderSportsStack();
+            lucide.createIcons();
+            bindDirectImageTaps();
+            showSaveToast('All Photos Reset to Default ✓');
+        }
+
+        // Compress uploaded image via HTML5 Canvas so it fits cleanly in localStorage & exports smoothly
+        function compressImageFile(file, maxWidth = 1200, quality = 0.82) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const img = new Image();
+                    img.onload = function() {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = evt.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('cameraRollInput').addEventListener('change', async function(e) {
             const file = e.target.files && e.target.files[0];
             if (!file || !activeCustomizingKey) return;
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const dataUrl = evt.target.result;
-                updateImageEverywhere(activeCustomizingKey, dataUrl);
+            try {
+                const compressedDataUrl = await compressImageFile(file, 1200, 0.82);
+                updateImageEverywhere(activeCustomizingKey, compressedDataUrl, 'Photo Saved to Browser Storage ✓');
                 const preview = document.getElementById('sheetPreviewImg');
-                if (preview) preview.src = dataUrl;
-            };
-            reader.readAsDataURL(file);
+                if (preview) preview.src = compressedDataUrl;
+                const badge = document.getElementById('sheetSavedBadge');
+                if (badge) badge.classList.remove('hidden');
+            } catch (err) {
+                console.error('Image compression failed:', err);
+            }
             e.target.value = '';
         });
 
-        function updateImageEverywhere(keyPath, newUrl) {
+        function updateImageEverywhere(keyPath, newUrl, toastMsg) {
             setImgUrl(keyPath, newUrl);
             document.querySelectorAll(`[data-img-key="${keyPath}"]`).forEach(img => {
                 img.src = newUrl;
             });
+            saveSiteImagesToStorage(toastMsg);
+        }
+
+        // One-Tap Generator: Downloads a complete `index.html` with current SITE_IMAGES baked in as the default for GitHub Pages!
+        function downloadUpdatedIndexHtml() {
+            if (!isAdminAuthenticated) {
+                openAdminPinKeypad();
+                return;
+            }
+            const currentDocHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const replacementBlock = `/* __START_SITE_IMAGES__ */\n        const DEFAULT_SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 12)};\n        /* __END_SITE_IMAGES__ */`;
+            const updatedHtml = currentDocHtml.replace(
+                /\/\* __START_SITE_IMAGES__ \*\/[\s\S]*?\/\* __END_SITE_IMAGES__ \*\//,
+                replacementBlock
+            );
+
+            const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSaveToast('Downloaded index.html for GitHub ✓');
         }
 
         function openExportCodeSheet() {
@@ -1536,25 +1724,29 @@
                 openAdminPinKeypad();
                 return;
             }
-            const codeString = `const SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 2)};`;
+            const codeString = `const DEFAULT_SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 2)};`;
             const sheetBody = document.getElementById('bottomSheetBody');
             sheetBody.innerHTML = `
                 <div class="space-y-3.5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#10B981]">AI Web Builder Ready</div>
-                            <h3 class="font-display font-extrabold text-lg text-white">Updated <code class="text-[#D4AF37]">SITE_IMAGES</code> Config</h3>
+                            <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#10B981]">GitHub Pages &amp; Local Persistence</div>
+                            <h3 class="font-display font-extrabold text-lg text-white">Save for All QR Visitors</h3>
                         </div>
                         <button onclick="closeBottomSheet()" class="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
-                    <p class="text-xs text-zinc-300">
-                        Copy and paste this object at the top of your script to permanently save your image paths:
+                    <p class="text-xs text-zinc-300 leading-relaxed">
+                        Your changes are <strong>already saved in this browser</strong> (try refreshing the page!). To make your new photos appear on <strong>other people's phones</strong> when they scan your GitHub Pages link, either download the ready-to-upload <code class="text-[#D4AF37]">index.html</code> file or copy the config block below:
                     </p>
-                    <pre class="bg-black border border-white/10 rounded-2xl p-3.5 text-[11px] text-emerald-300 font-mono overflow-x-auto max-h-60 select-all">${codeString.replace(/</g, '&lt;')}</pre>
-                    <button onclick="copySiteImagesToClipboard()" id="copyCodeSheetBtn" class="w-full py-3.5 rounded-2xl bg-[#D4AF37] text-black font-extrabold text-xs">
-                        Copy SITE_IMAGES Code
+                    <button onclick="downloadUpdatedIndexHtml()" class="w-full py-3.5 rounded-2xl bg-[#10B981] text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Download Ready-to-Upload index.html</span>
+                    </button>
+                    <pre class="bg-black border border-white/10 rounded-2xl p-3.5 text-[11px] text-emerald-300 font-mono overflow-x-auto max-h-52 select-all">${codeString.replace(/</g, '&lt;')}</pre>
+                    <button onclick="copySiteImagesToClipboard()" id="copyCodeSheetBtn" class="w-full py-3 rounded-2xl bg-[#D4AF37] text-black font-extrabold text-xs">
+                        Copy DEFAULT_SITE_IMAGES Code
                     </button>
                 </div>
             `;
@@ -1563,7 +1755,7 @@
         }
 
         function copySiteImagesToClipboard() {
-            const codeString = `const SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 2)};`;
+            const codeString = `const DEFAULT_SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 2)};`;
             const temp = document.createElement('textarea');
             temp.value = codeString;
             document.body.appendChild(temp);
