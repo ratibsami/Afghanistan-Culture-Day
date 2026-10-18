@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFGHANISTAN • University Culture Day Mobile Pass</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', '-apple-system', 'sans-serif'],
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        arabic: ['Noto Naskh Arabic', 'serif']
+                    },
+                    colors: {
+                        obsidian: '#070709',
+                        saffron: '#D4AF37',
+                        lapis: '#1E3F66',
+                        emerald: '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Native iOS Mobile Feel & Resets */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #020204;
+            color: #F5F5F7;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hide scrollbars for horizontal snap carousels */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* iOS Dark Glassmorphic Surfaces */
+        .ios-card {
+            background: rgba(255, 255, 255, 0.055);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+        }
+
+        .ios-card:active {
+            transform: scale(0.985);
+        }
+
+        .ios-bar {
+            background: rgba(10, 10, 14, 0.78);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Text Gold Gradient */
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FFF7D6 0%, #D4AF37 45%, #F59E0B 80%, #FFF7D6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Edit Photos Mode Highlighting */
+        body.edit-photos-mode [data-img-key] {
+            outline: 2.5px dashed #D4AF37 !important;
+            outline-offset: -4px;
+            cursor: pointer !important;
+        }
+
+        .tap-replace-badge {
+            display: none;
+        }
+
+        body.edit-photos-mode .tap-replace-badge {
+            display: inline-flex !important;
+        }
+
+        /* Animated Waveform Equalizer Bars */
+        @keyframes eqBounce {
+            0%, 100% { height: 4px; }
+            50% { height: 18px; }
+        }
+        .eq-bar {
+            width: 3px;
+            background: #D4AF37;
+            border-radius: 99px;
+            height: 5px;
+            transition: height 0.2s ease;
+        }
+        .playing .eq-bar:nth-child(1) { animation: eqBounce 0.65s ease-in-out infinite 0.05s; }
+        .playing .eq-bar:nth-child(2) { animation: eqBounce 0.5s ease-in-out infinite 0.2s; }
+        .playing .eq-bar:nth-child(3) { animation: eqBounce 0.8s ease-in-out infinite 0.1s; }
+        .playing .eq-bar:nth-child(4) { animation: eqBounce 0.55s ease-in-out infinite 0.3s; }
+        .playing .eq-bar:nth-child(5) { animation: eqBounce 0.7s ease-in-out infinite 0.15s; }
+
+        /* iOS PIN Keypad Shake Animation */
+        @keyframes pinShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        .pin-shake {
+            animation: pinShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        /* Bottom Sheet Slide Animation */
+        .bottom-sheet-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .bottom-sheet-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .bottom-sheet-panel {
+            transform: translateY(100%);
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .bottom-sheet-backdrop.open .bottom-sheet-panel {
+            transform: translateY(0);
+        }
+
+        /* Subtle Ambient Glow Animation */
+        @keyframes floatGlow {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(15px, -15px) scale(1.08); }
+        }
+        .ambient-orb {
+            animation: floatGlow 10s ease-in-out infinite;
+            filter: blur(65px);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-[#020204] text-[#F5F5F7] flex justify-center min-h-screen">
+
+    <!-- =====================================================================
+         MOBILE VIEWPORT SHELL (430px Max-Width Frame on Desktop, 100% on Phone)
+    ====================================================================== -->
+    <div id="mobileAppShell" class="w-full max-w-[430px] mx-auto min-h-screen bg-[#070709] relative overflow-x-hidden shadow-[0_0_90px_rgba(0,0,0,0.95)] sm:border-x sm:border-white/10 pb-28">
+
+        <!-- Ambient Background Orbs inside Mobile Frame -->
+        <div class="ambient-orb fixed top-12 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-[#1E3F66]/35 z-0"></div>
+        <div class="ambient-orb fixed bottom-24 left-1/2 -translate-x-1/3 w-64 h-64 rounded-full bg-[#D4AF37]/10 z-0"></div>
+
+        <!-- =================================================================
+             STICKY COMPACT MOBILE TOP STATUS / HEADER BAR
+        ================================================================== -->
+        <header class="sticky top-0 z-40 ios-bar border-b px-3.5 py-2.5 flex items-center justify-between gap-2">
+            <!-- Brand Identity -->
+            <a href="#hero" class="flex items-center gap-2 min-w-0">
+                <div class="w-8 h-8 rounded-2xl bg-gradient-to-br from-[#D4AF37] via-amber-500 to-[#10B981] flex items-center justify-center text-black font-extrabold text-[11px] tracking-tighter shadow-md shrink-0">
+                    AFG
+                </div>
+                <div class="truncate">
+                    <div class="font-display font-extrabold text-xs tracking-wider text-white leading-none">AFGHANISTAN</div>
+                    <div class="text-[10px] text-amber-300/90 font-medium flex items-center gap-1 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span>
+                        <span>Culture Day Pass</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Right Quick Action Pills: Live Rubab Audio + Discreet Admin Lock -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <!-- Live Rubab Audio Pill -->
+                <button onclick="toggleRubabAudio()" id="topAudioBtn" class="px-2.5 py-1.5 rounded-full bg-white/[0.07] border border-white/10 flex items-center gap-1.5 text-[11px] font-semibold text-amber-200 active:scale-95 transition">
+                    <i data-lucide="music" class="w-3.5 h-3.5 text-[#D4AF37]"></i>
+                    <span id="topAudioText">Rubab</span>
+                    <div id="topEqualizer" class="flex items-end gap-[2px] h-3.5 ml-0.5">
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                    </div>
+                </button>
+
+                <!-- Discreet Admin Lock Icon Button (Protected by PIN 12705854) -->
+                <button onclick="handleAdminLockButton()" id="topAdminLockBtn" class="w-8 h-8 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-500 hover:text-zinc-300 active:scale-90 transition" title="Organizer Admin">
+                    <i data-lucide="lock" id="topAdminLockIcon" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Unlocked Banner (Only visible after entering PIN 12705854) -->
+        <div id="editModeBanner" class="hidden bg-gradient-to-r from-amber-500/25 via-amber-400/15 to-emerald-500/25 border-b border-amber-400/40 px-3.5 py-2.5 text-xs flex items-center justify-between gap-2 relative z-30">
+            <div class="flex items-center gap-2 text-amber-200 min-w-0">
+                <i data-lucide="shield-check" class="w-4 h-4 text-[#10B981] shrink-0"></i>
+                <span class="truncate text-[11px]"><strong>Admin Unlocked</strong> • Tap any photo to swap</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="openExportCodeSheet()" class="px-2.5 py-1 rounded-full bg-[#D4AF37] text-black font-extrabold text-[10px] shadow">
+                    Copy Config
+                </button>
+                <button onclick="lockAdminSession()" class="px-2.5 py-1 rounded-full bg-red-500/20 border border-red-400/40 text-red-200 font-bold text-[10px]">
+                    Lock
+                </button>
+            </div>
+        </div>
+
+        <!-- =================================================================
+             1. HERO CARD (Full Mobile Screen Portrait Experience)
+        ================================================================== -->
+        <section id="hero" data-section="hero" class="relative px-3.5 pt-3 pb-6 z-10">
+            <div class="relative rounded-[32px] overflow-hidden min-h-[78vh] flex flex-col justify-between p-5 border border-white/15 shadow-2xl bg-zinc-900">
+                
+                <!-- Real Hero Background Image (SITE_IMAGES.heroBg) -->
+                <img id="img-heroBg" data-img-key="heroBg" src="" alt="Afghanistan Silk Road Architecture & Mountains"
+                     class="absolute inset-0 w-full h-full object-cover object-center scale-105 transition duration-700">
+                
+                <!-- Tap to Replace Badge -->
+                <button onclick="openPhotoCustomizer('heroBg', 'Hero Portrait Backdrop')" class="tap-replace-badge absolute top-4 right-4 z-30 bg-[#D4AF37] text-black font-extrabold text-[11px] px-3 py-1.5 rounded-full shadow-xl items-center gap-1.5">
+                    <i data-lucide="upload" class="w-3.5 h-3.5"></i> Tap to Replace (heroBg)
+                </button>
+
+                <!-- Multi-layer Cinematic Mobile Scrim -->
+                <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-[#070709] pointer-events-none"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.18),transparent_65%)] pointer-events-none"></div>
+
+                <!-- Top Hero Pill: Bilingual Greeting -->
+                <div class="relative z-10 flex flex-col items-start gap-2">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-xl border border-white/15">
+                        <span class="font-arabic text-xs sm:text-sm text-[#D4AF37] font-bold">خوش آمدید • ښه راغلاست</span>
+                        <span class="text-white/30">•</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-widest text-zinc-200">Welcome</span>
+                    </div>
+                </div>
+
+                <!-- Center/Bottom Hero Content -->
+                <div class="relative z-10 mt-auto pt-24 space-y-4">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/20 border border-[#10B981]/40 text-[#10B981] text-[11px] font-bold tracking-wider uppercase">
+                        <i data-lucide="qr-code" class="w-3 h-3"></i>
+                        <span>University Culture Day • Interactive Guide</span>
+                    </div>
+
+                    <h1 class="font-display font-extrabold text-[38px] leading-[1.02] tracking-tight text-white">
+                        <span class="text-gradient-gold block">AFGHANISTAN</span>
+                        <span class="font-serif italic font-normal text-2xl text-zinc-100 block mt-1.5">
+                            Heart of the Silk Road
+                        </span>
+                    </h1>
+
+                    <p class="text-[13.5px] leading-relaxed text-zinc-200/95 font-normal">
+                        Explore 5,000+ years of ancient civilization, sapphire mountain lakes, royal Kabuli cuisine, Rubab melodies, and the warmest hospitality on Earth.
+                    </p>
+
+                    <!-- Quick Stat Pills (3 Columns Mobile Grid) -->
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <div class="bg-black/55 backdrop-blur-lg border border-white/10 rounded-2xl p-2.5 text-center">
+                            <div class="font-display font-extrabold text-base text-[#D4AF37]">5,000+</div>
+                            <div class="text-[10px] text-zinc-300 font-medium">Yrs History</div>
+                        </div>
+                        <div class="bg-black/55 backdrop-blur-lg border border-white/10 rounded-2xl p-2.5 text-center">
+                            <div class="font-display font-extrabold text-base text-[#10B981]">34</div>
+                            <div class="text-[10px] text-zinc-300 font-medium">Provinces</div>
+                        </div>
+                        <div class="bg-black/55 backdrop-blur-lg border border-white/10 rounded-2xl p-2.5 text-center">
+                            <div class="font-display font-extrabold text-base text-sky-400">Silk Road</div>
+                            <div class="text-[10px] text-zinc-300 font-medium">Heart of Asia</div>
+                        </div>
+                    </div>
+
+                    <!-- Primary Mobile CTA & Swipe Indicator -->
+                    <div class="pt-2 flex items-center gap-2.5">
+                        <a href="#history" class="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-amber-400 to-yellow-500 text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 active:scale-95 transition">
+                            <span>Start Cultural Tour</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                        </a>
+                        <button onclick="openSharePassSheet()" class="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 text-white active:scale-95 transition" title="Share Booth QR Pass">
+                            <i data-lucide="qr-code" class="w-5 h-5 text-[#D4AF37]"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-zinc-400">
+                        <i data-lucide="chevrons-down" class="w-3.5 h-3.5 text-[#D4AF37] animate-bounce"></i>
+                        <span>Swipe up to explore sections</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             2. THE HISTORY (Long Editorial Story + Tap-to-Zoom Photo Frame)
+        ================================================================== -->
+        <section id="history" data-section="history" class="px-3.5 py-7 relative z-10">
+            <!-- Section Header -->
+            <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider">
+                    <i data-lucide="scroll-text" class="w-3 h-3"></i> Chapter 01 • Heritage
+                </span>
+                <span class="text-[11px] text-zinc-400 font-mono">3000 BCE – Present</span>
+            </div>
+
+            <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight leading-tight mb-4">
+                The History of <span class="text-gradient-gold">Afghanistan</span>
+            </h2>
+
+            <!-- Interactive Tap-to-Zoom Photo Card (SITE_IMAGES.historyMain) -->
+            <div class="ios-card p-2.5 mb-5 relative overflow-hidden">
+                <div class="relative rounded-[22px] overflow-hidden aspect-[4/3] bg-zinc-900">
+                    <img id="img-historyMain" data-img-key="historyMain" src="" alt="Ancient Architecture of Afghanistan"
+                         class="w-full h-full object-cover">
+                    
+                    <button onclick="openPhotoCustomizer('historyMain', 'The History Main Photo')" class="tap-replace-badge absolute top-3 left-3 z-30 bg-[#D4AF37] text-black font-extrabold text-[11px] px-3 py-1.5 rounded-full shadow-lg items-center gap-1">
+                        <i data-lucide="camera" class="w-3 h-3"></i> Tap to Replace (historyMain)
+                    </button>
+
+                    <button onclick="openImageZoomModal('historyMain', 'Crossroads of Ancient Empires', 'From the sapphire domes of Mazar-i-Sharif and Herat to the 12th-century Minaret of Jam, Afghan architecture reflects millennia of Silk Road artistry.')"
+                            class="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-black/65 backdrop-blur-md border border-white/20 text-white flex items-center justify-center active:scale-90 transition">
+                        <i data-lucide="maximize-2" class="w-4 h-4 text-[#D4AF37]"></i>
+                    </button>
+
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4">
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-[#D4AF37]">Tap Photo to Zoom • <span class="font-mono">SITE_IMAGES.historyMain</span></div>
+                        <div class="font-display font-bold text-sm text-white mt-0.5">The Blue Mosque &amp; Silk Road Citadels</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editorial Long Paragraph Card with Expandable Mobile Reader -->
+            <div class="ios-card p-5 space-y-4">
+                <!-- Golden Vertical Timeline Accent -->
+                <div class="pl-3.5 border-l-2 border-[#D4AF37] space-y-3.5 text-[14px] leading-[1.72] text-zinc-200 font-normal">
+                    <p>
+                        Celebrated by the poet-philosopher Allama Iqbal as the <strong class="text-white font-semibold">"Heart of Asia,"</strong> Afghanistan stands at one of the most consequential crossroads of human civilization. Known in classical antiquity as <strong class="text-[#D4AF37]">Ariana</strong> and <strong class="text-[#D4AF37]">Bactria</strong>, this rugged land of soaring Hindu Kush peaks and fertile valleys connected the Mediterranean, Persia, India, and Imperial China along the ancient <strong class="text-white">Silk Road</strong> for over five thousand years. As early as 3000 BCE, the Oxus Civilization flourished in northern Afghanistan, while the legendary mines of Badakhshan supplied royal <strong class="text-sky-300">Lapis Lazuli</strong> to the pharaohs of Egypt and the temples of Mesopotamia.
+                    </p>
+
+                    <div id="historyExpandableText" class="space-y-3.5 hidden">
+                        <p>
+                            Between the 1st and 7th centuries CE, Afghanistan became the creative crucible of <strong class="text-[#D4AF37]">Gandhara Art</strong>, blending Greco-Roman sculptural realism with Buddhist spiritual devotion across Balkh, Bagram, Hadda, and Bamyan—where artists painted the world's oldest known oil paintings inside cliffside caves. During the <strong class="text-[#10B981]">Islamic Golden Age</strong> and the subsequent Ghaznavid, Ghurid, and Timurid eras, cities such as <strong class="text-white">Balkh</strong> ("The Mother of Cities"), <strong class="text-white">Ghazni</strong>, and <strong class="text-white">Herat</strong> shone as global capitals of astronomy, medicine, architecture, and classical poetry—nurturing luminaries like <strong class="text-white">Mawlana Jalaluddin Balkhi (Rumi)</strong>, polymath <strong class="text-white">Al-Biruni</strong>, the heritage of <strong class="text-white">Ibn Sina (Avicenna)</strong>, and Queen Gawhar Shad's 15th-century Timurid Renaissance.
+                        </p>
+                        <p>
+                            In 1747, <strong class="text-[#D4AF37]">Ahmad Shah Durrani</strong> united the tribes at a historic Jirga in Kandahar, establishing the foundation of the modern Afghan nation. Through every century and test of history, the people of Afghanistan have safeguarded their timeless code of hospitality, poetic grace, and unyielding resilience.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Read Full Story Toggle Button -->
+                <button onclick="toggleHistoryReadMore()" id="historyReadMoreBtn" class="w-full py-2.5 rounded-2xl bg-white/[0.06] border border-white/10 text-xs font-bold text-[#D4AF37] flex items-center justify-center gap-1.5 active:scale-98 transition">
+                    <span id="historyReadMoreLabel">Read Complete Historical Story</span>
+                    <i data-lucide="chevron-down" id="historyReadMoreIcon" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Horizontal Swipeable Era Badges -->
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pt-1">
+                    <div class="shrink-0 px-3 py-2 rounded-2xl bg-black/40 border border-white/10">
+                        <div class="text-[10px] font-bold text-[#D4AF37]">3000 BCE</div>
+                        <div class="text-xs font-semibold text-white">Oxus &amp; Lapis Trade</div>
+                    </div>
+                    <div class="shrink-0 px-3 py-2 rounded-2xl bg-black/40 border border-white/10">
+                        <div class="text-[10px] font-bold text-sky-400">1st–7th C. CE</div>
+                        <div class="text-xs font-semibold text-white">Silk Road &amp; Gandhara</div>
+                    </div>
+                    <div class="shrink-0 px-3 py-2 rounded-2xl bg-black/40 border border-white/10">
+                        <div class="text-[10px] font-bold text-[#10B981]">9th–15th C.</div>
+                        <div class="text-xs font-semibold text-white">Golden &amp; Timurid Era</div>
+                    </div>
+                    <div class="shrink-0 px-3 py-2 rounded-2xl bg-black/40 border border-white/10">
+                        <div class="text-[10px] font-bold text-purple-400">1747 CE</div>
+                        <div class="text-xs font-semibold text-white">Modern Nation Founded</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             3. TOUCH-SWIPE IMAGE SLIDER (5 Iconic Landscapes & Landmarks)
+        ================================================================== -->
+        <section id="landmarks" class="py-6 relative z-10">
+            <div class="px-3.5 flex items-end justify-between mb-3.5">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                        <i data-lucide="compass" class="w-3 h-3"></i> Chapter 02 • Visual Tour
+                    </span>
+                    <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">
+                        Landscapes &amp; <span class="text-gradient-gold">Wonders</span>
+                    </h2>
+                </div>
+
+                <!-- Prev / Next Thumb Buttons -->
+                <div class="flex items-center gap-1.5">
+                    <button onclick="scrollLandmarkCarousel(-1)" class="w-9 h-9 rounded-full ios-card flex items-center justify-center text-white active:scale-90" aria-label="Previous slide">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="scrollLandmarkCarousel(1)" class="w-9 h-9 rounded-full ios-card flex items-center justify-center text-white active:scale-90" aria-label="Next slide">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Horizontal Snap-Scroll Carousel -->
+            <div id="landmarkSliderTrack" class="flex gap-3.5 overflow-x-auto snap-x snap-mandatory no-scrollbar px-3.5 pb-2">
+                <!-- Populated by JS from LANDMARKS_DATA -->
+            </div>
+
+            <!-- Carousel Dots Indicator -->
+            <div id="landmarkDots" class="flex items-center justify-center gap-1.5 mt-3">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             4. AFGHAN CUISINE (Swipeable Filter Pills + Rich Dish Cards)
+        ================================================================== -->
+        <section id="foods" data-section="foods" class="px-3.5 py-7 relative z-10">
+            <div class="mb-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <i data-lucide="utensils" class="w-3 h-3"></i> Chapter 03 • Royal Dastarkhwan
+                </span>
+                <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">
+                    Iconic <span class="text-gradient-gold">Afghan Cuisine</span>
+                </h2>
+                <p class="text-xs text-zinc-400 mt-1">
+                    Perfumed with Herat saffron, green cardamom, garlic yogurt, and slow-simmered spices.
+                </p>
+            </div>
+
+            <!-- Mobile Swipeable Category Filter Pills -->
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-2">
+                <button onclick="filterMobileFoods('all')" data-food-pill="all" class="food-pill shrink-0 px-4 py-2 rounded-full text-xs font-extrabold bg-[#D4AF37] text-black shadow-md transition">
+                    All Dishes (6)
+                </button>
+                <button onclick="filterMobileFoods('savory')" data-food-pill="savory" class="food-pill shrink-0 px-4 py-2 rounded-full text-xs font-semibold ios-card text-zinc-300 transition">
+                    Rice &amp; Kababs
+                </button>
+                <button onclick="filterMobileFoods('dumplings')" data-food-pill="dumplings" class="food-pill shrink-0 px-4 py-2 rounded-full text-xs font-semibold ios-card text-zinc-300 transition">
+                    Dumplings
+                </button>
+                <button onclick="filterMobileFoods('sweet')" data-food-pill="sweet" class="food-pill shrink-0 px-4 py-2 rounded-full text-xs font-semibold ios-card text-zinc-300 transition">
+                    Street &amp; Sweets
+                </button>
+            </div>
+
+            <!-- Vertical Stack of Mobile Food Cards -->
+            <div id="mobileFoodsList" class="space-y-4">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             5. CULTURE & HOSPITALITY (2x2 Mobile Bento + Tap Detail Sheet)
+        ================================================================== -->
+        <section id="culture" class="px-3.5 py-7 relative z-10">
+            <div class="mb-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-400/30 text-purple-300 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i> Chapter 04 • Living Identity
+                </span>
+                <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">
+                    Culture &amp; <span class="text-gradient-gold">Hospitality</span>
+                </h2>
+                <p class="text-xs text-zinc-400 mt-1">
+                    Tap any card below to open the full cultural story &amp; traditions.
+                </p>
+            </div>
+
+            <!-- 2x2 Mobile Bento Grid -->
+            <div id="cultureBentoGrid" class="grid grid-cols-2 gap-3">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             6. MUSIC, SINGERS & ARTISTS (Apple Music Mobile Card + Swipeable Artists)
+        ================================================================== -->
+        <section id="music" data-section="music" class="py-7 relative z-10">
+            <div class="px-3.5 mb-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <i data-lucide="music-4" class="w-3 h-3"></i> Chapter 05 • Melodies &amp; Masters
+                </span>
+                <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">
+                    Music, Singers &amp; <span class="text-gradient-gold">Artists</span>
+                </h2>
+            </div>
+
+            <!-- Apple Music Style Mobile Player Card for The Afghan Rubab -->
+            <div class="px-3.5 mb-5">
+                <div class="ios-card p-4 border border-[#D4AF37]/30 bg-gradient-to-br from-[#1E3F66]/35 via-white/[0.04] to-[#D4AF37]/10">
+                    <div class="flex items-center gap-3.5">
+                        <!-- Album Art / Rubab Photo -->
+                        <div class="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-zinc-900 border border-white/15">
+                            <img id="img-rubabInstrument" data-img-key="music.rubab" src="" alt="Afghan Rubab"
+                                 class="w-full h-full object-cover">
+                            <button onclick="openPhotoCustomizer('music.rubab', 'Afghan Rubab Instrument')" class="tap-replace-badge absolute inset-0 bg-black/70 text-[#D4AF37] font-bold text-[9px] flex items-center justify-center text-center p-1">
+                                Tap to Replace
+                            </button>
+                        </div>
+
+                        <!-- Track Metadata -->
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 rounded-md bg-[#D4AF37]/20 text-[#D4AF37] text-[9px] font-extrabold uppercase">Live Synth</span>
+                                <span class="text-[10px] text-zinc-400 truncate">Rag Bairami • Kabul</span>
+                            </div>
+                            <h3 class="font-display font-extrabold text-base text-white truncate mt-1">
+                                The Rubab — Lion of Instruments
+                            </h3>
+                            <p class="text-[11px] text-zinc-300 line-clamp-2 mt-0.5">
+                                18-stringed mulberry-wood national lute of Afghanistan; ancestor of the Sarod.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Pluck String Pads + Play Controls -->
+                    <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+                        <button onclick="toggleRubabAudio()" id="playerCardBtn" class="px-4 py-2.5 rounded-2xl bg-[#D4AF37] text-black font-extrabold text-xs flex items-center gap-2 shadow-md active:scale-95 transition shrink-0">
+                            <i data-lucide="play" id="playerCardIcon" class="w-4 h-4 fill-current"></i>
+                            <span id="playerCardLabel">Play Folk Melody</span>
+                        </button>
+
+                        <!-- Manual Pluck Notes for Visitors -->
+                        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                            <button onclick="pluckSingleString(220.00)" class="px-2.5 py-2 rounded-xl bg-white/[0.07] border border-white/10 text-[10px] font-bold text-amber-200 active:bg-[#D4AF37] active:text-black transition">Sa</button>
+                            <button onclick="pluckSingleString(246.94)" class="px-2.5 py-2 rounded-xl bg-white/[0.07] border border-white/10 text-[10px] font-bold text-amber-200 active:bg-[#D4AF37] active:text-black transition">Re</button>
+                            <button onclick="pluckSingleString(261.63)" class="px-2.5 py-2 rounded-xl bg-white/[0.07] border border-white/10 text-[10px] font-bold text-amber-200 active:bg-[#D4AF37] active:text-black transition">Ga</button>
+                            <button onclick="pluckSingleString(293.66)" class="px-2.5 py-2 rounded-xl bg-white/[0.07] border border-white/10 text-[10px] font-bold text-amber-200 active:bg-[#D4AF37] active:text-black transition">Ma</button>
+                            <button onclick="pluckSingleString(329.63)" class="px-2.5 py-2 rounded-xl bg-white/[0.07] border border-white/10 text-[10px] font-bold text-amber-200 active:bg-[#D4AF37] active:text-black transition">Pa</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horizontal Swipeable Singers & Artists Cards -->
+            <div class="px-3.5 mb-2 flex items-center justify-between text-xs text-zinc-400">
+                <span>Legendary Singers &amp; Fine Artists</span>
+                <span class="text-[#D4AF37] flex items-center gap-1">Swipe <i data-lucide="move-right" class="w-3.5 h-3.5"></i></span>
+            </div>
+            <div id="artistsCarousel" class="flex gap-3.5 overflow-x-auto snap-x snap-mandatory no-scrollbar px-3.5 pb-2">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             7. SPORTS & NATIONAL PRIDE (Mobile Story Cards)
+        ================================================================== -->
+        <section id="sports" class="px-3.5 py-7 relative z-10">
+            <div class="mb-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <i data-lucide="trophy" class="w-3 h-3"></i> Chapter 06 • Champions
+                </span>
+                <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">
+                    Sports &amp; <span class="text-gradient-gold">National Pride</span>
+                </h2>
+            </div>
+
+            <div id="sportsStack" class="space-y-4">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             8. GREAT THINGS & WORLD MILESTONES HAPPENED IN AFGHANISTAN
+        ================================================================== -->
+        <section id="milestones" data-section="milestones" class="px-3.5 py-7 relative z-10">
+            <div class="mb-5">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <i data-lucide="award" class="w-3 h-3"></i> Chapter 07 • World Firsts
+                </span>
+                <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">
+                    Great Things Born in <span class="text-gradient-gold">Afghanistan</span>
+                </h2>
+                <p class="text-xs text-zinc-400 mt-1">
+                    Historic breakthroughs, world-famous scholars, and natural treasures that shaped human civilization.
+                </p>
+            </div>
+
+            <!-- Vertical Timeline Cards -->
+            <div id="milestonesTimeline" class="relative pl-5 border-l-2 border-[#D4AF37]/40 space-y-4">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             9. MOBILE EVENT PASS FOOTER & QR SHARE CARD
+        ================================================================== -->
+        <footer class="px-3.5 pt-4 pb-8 relative z-10">
+            <div class="ios-card p-5 border border-[#D4AF37]/35 bg-gradient-to-b from-white/[0.07] to-black/80 relative overflow-hidden">
+                <!-- Ticket Cutout Notches -->
+                <div class="w-6 h-6 rounded-full bg-[#070709] border border-white/10 absolute -left-3 top-1/2 -translate-y-1/2"></div>
+                <div class="w-6 h-6 rounded-full bg-[#070709] border border-white/10 absolute -right-3 top-1/2 -translate-y-1/2"></div>
+
+                <div class="flex items-center justify-between pb-4 border-b border-dashed border-white/15">
+                    <div>
+                        <div class="text-[10px] font-extrabold uppercase tracking-widest text-[#10B981]">Official Digital Souvenir</div>
+                        <h3 class="font-display font-extrabold text-lg text-white">Afghanistan Culture Pavilion</h3>
+                        <p class="text-xs text-zinc-400">University Culture Day • Complimentary Tea &amp; Haft Mewa</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shrink-0">
+                        <i data-lucide="ticket" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-col gap-2.5">
+                    <div class="flex gap-2">
+                        <button onclick="openSharePassSheet()" class="flex-1 py-3 rounded-2xl bg-[#D4AF37] text-black font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition">
+                            <i data-lucide="qr-code" class="w-4 h-4"></i>
+                            <span>Show QR &amp; Share Booth Pass</span>
+                        </button>
+                        <button id="footerExportConfigBtn" onclick="openExportCodeSheet()" class="hidden px-4 py-3 rounded-2xl bg-white/10 border border-white/15 text-xs font-bold text-amber-200 items-center justify-center gap-1.5 active:scale-95 transition">
+                            <i data-lucide="code-2" class="w-4 h-4"></i>
+                            <span>SITE_IMAGES</span>
+                        </button>
+                    </div>
+                    <div class="text-center text-[11px] text-zinc-500 pt-1">
+                        Afghanistan University Culture Day • Interactive Mobile Guide
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- =================================================================
+             FLOATING iOS BOTTOM GLASS DOCK / TAB BAR (5 Quick-Jump Icons)
+        ================================================================== -->
+        <nav class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100%-24px)] max-w-[406px] z-40 ios-bar border rounded-[26px] px-2 py-1.5 shadow-[0_15px_35px_rgba(0,0,0,0.85)] flex items-center justify-around">
+            <a href="#hero" data-nav-target="hero" class="dock-tab flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-[#D4AF37] transition">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span class="text-[10px] font-bold mt-0.5">Home</span>
+            </a>
+            <a href="#history" data-nav-target="history" class="dock-tab flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-zinc-400 hover:text-white transition">
+                <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                <span class="text-[10px] font-semibold mt-0.5">History</span>
+            </a>
+            <a href="#foods" data-nav-target="foods" class="dock-tab flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-zinc-400 hover:text-white transition">
+                <i data-lucide="utensils" class="w-4 h-4"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Food</span>
+            </a>
+            <a href="#music" data-nav-target="music" class="dock-tab flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-zinc-400 hover:text-white transition">
+                <i data-lucide="music" class="w-4 h-4"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Music</span>
+            </a>
+            <a href="#milestones" data-nav-target="milestones" class="dock-tab flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-zinc-400 hover:text-white transition">
+                <i data-lucide="award" class="w-4 h-4"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Milestones</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- =====================================================================
+         UNIVERSAL MOBILE BOTTOM SHEET (Photo Customizer, Culture Details, QR)
+    ====================================================================== -->
+    <div id="mobileBottomSheet" class="bottom-sheet-backdrop fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex flex-col justify-end items-center">
+        <div onclick="closeBottomSheet()" class="w-full flex-1"></div>
+        <div class="bottom-sheet-panel w-full max-w-[430px] bg-[#111116] border-t border-white/15 rounded-t-[32px] p-5 pb-8 shadow-2xl max-h-[86vh] overflow-y-auto">
+            <!-- Sheet Grabber Handle -->
+            <div class="w-11 h-1.5 rounded-full bg-white/20 mx-auto mb-4"></div>
+            <div id="bottomSheetBody"></div>
+        </div>
+    </div>
+
+    <!-- Hidden File Input for Camera Roll / Local File Upload -->
+    <input type="file" id="cameraRollInput" accept="image/*" class="hidden">
+
+    <!-- =====================================================================
+         APPLICATION SCRIPT & CENTRALIZED `SITE_IMAGES` OBJECT
+    ====================================================================== -->
+    <script>
+        /**
+         * ============================================================================
+         * 1. CENTRALIZED `SITE_IMAGES` CONFIGURATION OBJECT
+         * ============================================================================
+         * AI Web Builders & Developers: Replace any URL below with your own uploaded
+         * project image path (e.g., "./images/hero.jpg") or tap "Swap Photos" in the
+         * top mobile bar to replace photos live from your phone camera roll.
+         */
+        const SITE_IMAGES = {
+            heroBg: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
+            historyMain: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shrine_of_Ali_Mazar.jpg/1280px-Shrine_of_Ali_Mazar.jpg",
+
+            landmarks: {
+                bandEAmir: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Band-e-Amir_lakes.jpg/1280px-Band-e-Amir_lakes.jpg",
+                blueMosque: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Shrine_of_Ali_Mazar.jpg/1280px-Shrine_of_Ali_Mazar.jpg",
+                minaretOfJam: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Minaret_of_jam_2009_b.jpg/1024px-Minaret_of_jam_2009_b.jpg",
+                heratCitadel: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Citadel_of_Herat.jpg/1280px-Citadel_of_Herat.jpg",
+                hinduKush: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Hindu_Kush_mountain_range.jpg/1280px-Hindu_Kush_mountain_range.jpg"
+            },
+
+            foods: {
+                kabuliPulao: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Kabuli_Pulao.jpg/1024px-Kabuli_Pulao.jpg",
+                mantu: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Afghan_mantu.jpg/1024px-Afghan_mantu.jpg",
+                bolani: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Bolani.jpg/1024px-Bolani.jpg",
+                chopanKabab: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80",
+                ashak: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=900&q=80",
+                sheerYakh: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=900&q=80"
+            },
+
+            culture: {
+                melmastia: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=900&q=80",
+                attire: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=900&q=80",
+                carpets: "https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&w=900&q=80",
+                poetry: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=900&q=80"
+            },
+
+            music: {
+                rubab: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Rubab_displayed_at_MIM_Phoenix.jpg/1024px-Rubab_displayed_at_MIM_Phoenix.jpg",
+                ahmadZahir: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+                ustadSarahang: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&w=800&q=80",
+                farhadDarya: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80",
+                behzadArt: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80"
+            },
+
+            sports: {
+                cricket: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=900&q=80",
+                buzkashi: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Buzkashi_in_Mazar-e-Sharif.jpg/1024px-Buzkashi_in_Mazar-e-Sharif.jpg",
+                taekwondo: "https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&w=900&q=80"
+            },
+
+            milestones: {
+                bamyanOil: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Band-e-Amir_lakes.jpg/1024px-Band-e-Amir_lakes.jpg",
+                lapisLazuli: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80"
+            }
+        };
+
+        // Helper functions to read/write nested keys in SITE_IMAGES
+        function getImgUrl(keyPath) {
+            return keyPath.split('.').reduce((acc, part) => (acc && acc[part] !== undefined) ? acc[part] : '', SITE_IMAGES);
+        }
+
+        function setImgUrl(keyPath, url) {
+            const parts = keyPath.split('.');
+            let ref = SITE_IMAGES;
+            for (let i = 0; i < parts.length - 1; i++) {
+                ref = ref[parts[i]];
+            }
+            ref[parts[parts.length - 1]] = url;
+        }
+
+        function fallbackImg(el, title) {
+            el.onerror = null;
+            el.src = `https://placehold.co/800x600/121218/D4AF37?text=${encodeURIComponent(title || 'Afghanistan')}`;
+        }
+
+        /**
+         * ============================================================================
+         * 2. MOBILE CULTURAL CONTENT DATASETS
+         * ============================================================================
+         */
+        const LANDMARKS_DATA = [
+            {
+                key: "landmarks.bandEAmir",
+                title: "Band-e-Amir National Park",
+                province: "Bamyan Highlands",
+                badge: "6 Sapphire Lakes",
+                desc: "Six deep cobalt-blue alpine lakes at 3,000m altitude held back by natural mineral travertine dams."
+            },
+            {
+                key: "landmarks.blueMosque",
+                title: "Blue Mosque of Mazar-i-Sharif",
+                province: "Balkh Province",
+                badge: "Turquoise Masterpiece",
+                desc: "Clad in hand-painted turquoise tiles and home to thousands of snow-white doves."
+            },
+            {
+                key: "landmarks.minaretOfJam",
+                title: "The Minaret of Jam",
+                province: "Ghor Province • UNESCO",
+                badge: "Built 1194 CE",
+                desc: "A 65-meter Ghurid brick spire rising dramatically beside the Hari River with Kufic script."
+            },
+            {
+                key: "landmarks.heratCitadel",
+                title: "Citadel of Herat",
+                province: "Herat • Silk Road",
+                badge: "2,300+ Yrs Old",
+                desc: "Fortress from Alexander the Great's era and royal seat of the 15th-century Timurid Renaissance."
+            },
+            {
+                key: "landmarks.hinduKush",
+                title: "Hindu Kush & Wakhan Peaks",
+                province: "Badakhshan • Roof of World",
+                badge: "7,492m Noshaq Peak",
+                desc: "Soaring snow-crowned peaks and high valleys traversed by Silk Road caravans and Marco Polo."
+            }
+        ];
+
+        const FOODS_DATA = [
+            {
+                key: "foods.kabuliPulao",
+                name: "Kabuli Pulao",
+                subtitle: "National Dish of Afghanistan",
+                category: "savory",
+                tags: ["Aged Basmati", "Caramelized Carrots", "Raisins & Almonds", "Cardamom Lamb"],
+                desc: "Fragrant long-grain rice steamed in spiced meat broth and crowned with sweet julienned carrots, dark raisins, slivered almonds, and tender lamb."
+            },
+            {
+                key: "foods.mantu",
+                name: "Mantu",
+                subtitle: "Hand-Folded Steamed Dumplings",
+                category: "dumplings",
+                tags: ["Spiced Beef", "Garlic Chakka Yogurt", "Split Pea Sauce", "Dried Mint"],
+                desc: "Paper-thin steamed dumplings filled with spiced minced beef and onions, topped with garlicky strained yogurt, yellow split peas, and mint."
+            },
+            {
+                key: "foods.bolani",
+                name: "Bolani",
+                subtitle: "Artisan Stuffed Flatbread",
+                category: "sweet",
+                tags: ["Gandana Chives", "Spiced Potato", "Sweet Pumpkin", "Green Chutney"],
+                desc: "Crispy pan-seared flatbread stuffed with fragrant Afghan chives, seasoned potatoes, or pumpkin, served hot with coriander-mint yogurt."
+            },
+            {
+                key: "foods.chopanKabab",
+                name: "Chopan Kabab",
+                subtitle: "Charcoal-Seared Lamb Ribs",
+                category: "savory",
+                tags: ["Charcoal Embers", "Tandoor Naan", "Sumac", "Coriander"],
+                desc: "Succulent skewered lamb chops marinated in crushed coriander and grape vinegar, seared over glowing wood embers and served on warm naan."
+            },
+            {
+                key: "foods.ashak",
+                name: "Ashak",
+                subtitle: "Kabul's Signature Leek Dumplings",
+                category: "dumplings",
+                tags: ["Fresh Chives", "Garlic Yogurt", "Tomato-Meat Sauce", "Mint"],
+                desc: "Delicate boiled pasta parcels stuffed with wild chives, resting on cool garlic yogurt and drizzled with savory tomato sauce."
+            },
+            {
+                key: "foods.sheerYakh",
+                name: "Sheer Yakh & Haft Mewa",
+                subtitle: "Rosewater Ice Cream & 7-Fruit Syrup",
+                category: "sweet",
+                tags: ["Rosewater", "Cardamom", "Pistachios", "7 Dried Fruits"],
+                desc: "Hand-spun Afghan rosewater and cardamom kulfi ice cream topped with thick Qaymaq cream and pistachios, paired with festive 7-fruit Haft Mewa."
+            }
+        ];
+
+        const CULTURE_BENTO = [
+            {
+                id: "melmastia",
+                key: "culture.melmastia",
+                title: "Melmastia",
+                subtitle: "Sacred Hospitality & Tea",
+                icon: "cup-soda",
+                quote: "«مهمان حبیب خداست» — A guest is the beloved of God.",
+                fullStory: "In every Afghan home, guests are seated in the place of honor atop hand-woven carpets and plush Tushak cushions. Within moments, hosts pour fragrant green tea infused with crushed cardamom pods (Chai Sabz) alongside bowls of roasted almonds, dried mulberries, and sugar-coated Nuql.",
+                bullets: [
+                    "Dastarkhwan: Communal dining cloth where everyone shares food equally.",
+                    "Qaymaq Chai: Festive ruby-pink milk tea topped with clotted cream and pistachios.",
+                    "Unconditional Warmth: Visitors are treated as family regardless of background."
+                ]
+            },
+            {
+                id: "attire",
+                key: "culture.attire",
+                title: "Royal Attire",
+                subtitle: "Silk, Mirrors & Chapan",
+                icon: "shirt",
+                quote: "Every province weaves its heritage in silk thread and tiny mirrors.",
+                fullStory: "Afghan traditional clothing is a wearable art form. Celebratory women's Gand-e-Afghani dresses feature intricate silk embroidery, tiny reflective Sheesha mirrors, and beaded cuffs, while men wear crisp Perahan Tunban with embroidered waistcoats, silk Chapans, or classic Pakol hats.",
+                bullets: [
+                    "Khamak & Zardozi: Fine geometric hand-embroidery from Kandahar and Herat.",
+                    "Balkh Silk Chapan: Iconic striped coat worn across northern highlands.",
+                    "National Attan: Joyous circular folk dance performed at weddings and festivals."
+                ]
+            },
+            {
+                id: "carpets",
+                key: "culture.carpets",
+                title: "Afghan Rugs",
+                subtitle: "Vegetable-Dyed Wool Art",
+                icon: "layers",
+                quote: "Hand-knotted over months using highland wool and pomegranate dyes.",
+                fullStory: "World-renowned Khal Mohammadi, Turkmen, and Baluch carpets are woven entirely by hand using pure Ghazni highland sheep wool and natural dyes extracted from pomegranate rinds, madder root, walnut husks, and indigo.",
+                bullets: [
+                    "Generational Patterns: Geometric guls and medallions passed down in memory.",
+                    "Herati Blue Glass: Ancient hand-blown glass vessels crafted in adobe kilns.",
+                    "Istalif Ceramics: Turquoise-glazed pottery from the green hills above Kabul."
+                ]
+            },
+            {
+                id: "poetry",
+                key: "culture.poetry",
+                title: "Living Poetry",
+                subtitle: "Dari & Pashto Verse",
+                icon: "feather",
+                quote: "A land where scholars, merchants, and elders converse in classical couplets.",
+                fullStory: "Poetry is woven into everyday Afghan life. Families gather on winter solstice nights (Shab-e-Yalda) with ruby pomegranates to recite Rumi, Rabi'a Balkhi (first woman poet of Persian literature), Rahman Baba, Khushal Khan Khattak, and Hafez.",
+                bullets: [
+                    "Rabi'a Balkhi: 10th-century trailblazer of lyrical Persian verse.",
+                    "Rahman Baba: The beloved Sufi 'Nightingale of Pashto Poetry'.",
+                    "Calligraphy: Masterpieces of Nastaliq and Kufic script in manuscripts."
+                ]
+            }
+        ];
+
+        const ARTISTS_DATA = [
+            {
+                key: "music.ahmadZahir",
+                name: "Ahmad Zahir",
+                role: "The Golden Voice of Afghanistan",
+                era: "1946–1979 • Pop & Poetry Legend",
+                bio: "Often called the 'Elvis of Afghanistan', Ahmad Zahir fused Rumi and classical Persian poetry with electric organs, brass, and tabla—recording over 30 immortal albums before age 33."
+            },
+            {
+                key: "music.ustadSarahang",
+                name: "Ustad Sarahang",
+                role: "Crown of Classical Kharabat Music",
+                era: "1924–1983 • Classical Maestro",
+                bio: "Hailing from Kabul's historic Kharabat music quarter, Ustad Mohammad Hussain Sarahang was revered across Afghanistan and India as the supreme master of classical Ghazal and Raga."
+            },
+            {
+                key: "music.farhadDarya",
+                name: "Farhad Darya",
+                role: "Ambassador of Modern Afghan Music",
+                era: "Contemporary Folk-Pop Icon",
+                bio: "Beloved for uplifting anthems like 'Kabul Jaan' and 'Attan', Farhad Darya united Afghans worldwide by blending regional folk rhythms with modern orchestration."
+            },
+            {
+                key: "music.behzadArt",
+                name: "Master Kamaluddin Behzad",
+                role: "Genius of Herat Miniature Painting",
+                era: "1450–1535 • Timurid Renaissance",
+                bio: "Born in Herat, Behzad revolutionized Eastern miniature art with expressive human emotion, dynamic architecture, and pure lapis lazuli and gold pigments."
+            }
+        ];
+
+        const SPORTS_DATA = [
+            {
+                key: "sports.cricket",
+                title: "Afghanistan National Cricket Team",
+                badge: "World Cup Semi-Finalists",
+                stat: "Global Giant-Killers",
+                desc: "Led by spin superstar Rashid Khan, Mohammad Nabi, and Rahmanullah Gurbaz, the 'Blue Tigers' rose from refugee camps to defeat historic champions England, Australia, New Zealand, and Pakistan on the World Cup stage."
+            },
+            {
+                key: "sports.buzkashi",
+                title: "Buzkashi",
+                badge: "National Equestrian Sport",
+                stat: "Heroic Horsemen (Chapandazan)",
+                desc: "Across the sweeping northern plains of Mazar-i-Sharif and Kunduz, master riders (Chapandazan) on fearless stallions compete in one of the world's most thrilling displays of equestrian skill."
+            },
+            {
+                key: "sports.taekwondo",
+                title: "Olympic Martial Arts Triumph",
+                badge: "2x Olympic Medals",
+                stat: "Rohullah Nikpai (2008 & 2012)",
+                desc: "Taekwondo icon Rohullah Nikpai made history at the 2008 Beijing Olympics by winning Afghanistan's first-ever Olympic medal, followed by a second bronze at London 2012."
+            }
+        ];
+
+        const MILESTONES_DATA = [
+            {
+                era: "7th Century CE • Bamyan Caves",
+                title: "World's Oldest Known Oil Paintings",
+                icon: "palette",
+                desc: "Chemical analysis by international scientists revealed that Buddhist murals in the caves of Bamyan were painted with walnut and poppy-seed drying oils in the 600s CE—hundreds of years before oil painting appeared in Renaissance Europe."
+            },
+            {
+                era: "1207 CE • Balkh Province",
+                title: "Birthplace of Mawlana Rumi & Golden Age Giants",
+                icon: "book-open",
+                desc: "Mawlana Jalaluddin Balkhi (Rumi)—the world's most widely read mystic poet—was born in Balkh. Afghanistan also nurtured polymath Al-Biruni (who measured Earth's radius) and the ancestral roots of physician Ibn Sina (Avicenna)."
+            },
+            {
+                era: "7,000+ BCE • Badakhshan Mines",
+                title: "9,000 Years of Royal Lapis Lazuli",
+                icon: "gem",
+                desc: "The Sar-e-Sang mines in Badakhshan are humanity's oldest active mines. Afghan Lapis Lazuli inlaid Tutankhamun's golden mask in Egypt and was ground into priceless Ultramarine blue paint by Da Vinci and Vermeer."
+            },
+            {
+                era: "15th Century • Herat",
+                title: "Queen Gawhar Shad's Timurid Renaissance",
+                icon: "landmark",
+                desc: "Visionary ruler Queen Gawhar Shad transformed Herat into the cultural capital of Asia, patronage that produced the Musalla Complex, universities, and astronomical observatories."
+            },
+            {
+                era: "Modern Era • Herat Province",
+                title: "Crowned #1 Best Saffron on Earth",
+                icon: "flower-2",
+                desc: "Hand-harvested crimson saffron stigmas from Herat have been awarded the #1 Finest Quality Saffron in the World multiple times by the International Taste Institute in Brussels."
+            }
+        ];
+
+        /**
+         * ============================================================================
+         * 3. RENDER FUNCTIONS FOR MOBILE SECTIONS
+         * ============================================================================
+         */
+        let currentFoodCategory = "all";
+        let isEditPhotosMode = false;
+        let isAdminAuthenticated = false;
+        const ADMIN_SECRET_PIN = "12705854";
+        let currentPinBuffer = "";
+        let activeCustomizingKey = null;
+
+        function initStaticMobileImages() {
+            const heroEl = document.getElementById('img-heroBg');
+            heroEl.src = getImgUrl('heroBg');
+            heroEl.onerror = () => fallbackImg(heroEl, 'Afghanistan Hero');
+
+            const histEl = document.getElementById('img-historyMain');
+            histEl.src = getImgUrl('historyMain');
+            histEl.onerror = () => fallbackImg(histEl, 'Afghanistan History');
+
+            const rubabEl = document.getElementById('img-rubabInstrument');
+            rubabEl.src = getImgUrl('music.rubab');
+            rubabEl.onerror = () => fallbackImg(rubabEl, 'Afghan Rubab');
+        }
+
+        // --- 3A. RENDER TOUCH-SWIPE LANDMARKS CAROUSEL ---
+        function renderLandmarksCarousel() {
+            const track = document.getElementById('landmarkSliderTrack');
+            const dots = document.getElementById('landmarkDots');
+
+            track.innerHTML = LANDMARKS_DATA.map((item, idx) => `
+                <div class="snap-center shrink-0 w-[86%] ios-card overflow-hidden relative">
+                    <div class="relative h-64 bg-zinc-900">
+                        <img data-img-key="${item.key}" src="${getImgUrl(item.key)}" alt="${item.title}"
+                             onerror="fallbackImg(this, '${item.title.replace(/'/g, "")}')"
+                             class="w-full h-full object-cover">
+                        
+                        <button onclick="openPhotoCustomizer('${item.key}', '${item.title.replace(/'/g, "")}')"
+                                class="tap-replace-badge absolute top-3 left-3 z-30 bg-[#D4AF37] text-black font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg items-center gap-1">
+                            <i data-lucide="camera" class="w-3 h-3"></i> Replace (${item.key.split('.')[1]})
+                        </button>
+
+                        <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md border border-white/15 text-[10px] font-bold text-[#D4AF37]">
+                            ${item.badge}
+                        </div>
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#070709] via-black/30 to-transparent"></div>
+
+                        <div class="absolute bottom-3 left-4 right-4">
+                            <div class="text-[11px] text-amber-200/90 font-medium flex items-center gap-1">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-[#D4AF37]"></i> ${item.province}
+                            </div>
+                            <h3 class="font-display font-extrabold text-lg text-white leading-snug mt-0.5">${item.title}</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-3">
+                        <p class="text-xs text-zinc-300 leading-relaxed">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            dots.innerHTML = LANDMARKS_DATA.map((_, idx) => `
+                <span class="landmark-dot h-1.5 rounded-full transition-all ${idx === 0 ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-white/20'}"></span>
+            `).join('');
+
+            // Update active dot on touch scroll
+            track.addEventListener('scroll', () => {
+                const cardWidth = track.querySelector('div')?.offsetWidth || 300;
+                const activeIdx = Math.round(track.scrollLeft / (cardWidth + 14));
+                document.querySelectorAll('.landmark-dot').forEach((dot, i) => {
+                    dot.className = `landmark-dot h-1.5 rounded-full transition-all ${i === activeIdx ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-white/20'}`;
+                });
+            }, { passive: true });
+        }
+
+        function scrollLandmarkCarousel(direction) {
+            const track = document.getElementById('landmarkSliderTrack');
+            const cardWidth = track.querySelector('div')?.offsetWidth || 320;
+            track.scrollBy({ left: direction * (cardWidth + 14), behavior: 'smooth' });
+        }
+
+        // --- 3B. RENDER MOBILE FOODS ---
+        function renderMobileFoods() {
+            const container = document.getElementById('mobileFoodsList');
+            const items = currentFoodCategory === 'all'
+                ? FOODS_DATA
+                : FOODS_DATA.filter(f => f.category === currentFoodCategory);
+
+            container.innerHTML = items.map(food => `
+                <div class="ios-card overflow-hidden">
+                    <div class="relative h-48 bg-zinc-900">
+                        <img data-img-key="${food.key}" src="${getImgUrl(food.key)}" alt="${food.name}"
+                             onerror="fallbackImg(this, '${food.name}')"
+                             class="w-full h-full object-cover">
+                        
+                        <button onclick="openPhotoCustomizer('${food.key}', '${food.name}')"
+                                class="tap-replace-badge absolute top-3 left-3 z-30 bg-[#D4AF37] text-black font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg items-center gap-1">
+                            <i data-lucide="camera" class="w-3 h-3"></i> Tap to Replace (${food.key})
+                        </button>
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#070709] via-transparent to-transparent"></div>
+                        <div class="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37]">${food.subtitle}</div>
+                                <h3 class="font-display font-extrabold text-xl text-white">${food.name}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-3 space-y-3">
+                        <p class="text-xs text-zinc-300 leading-relaxed">${food.desc}</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${food.tags.map(t => `<span class="px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-[10px] font-semibold text-amber-200">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+            bindDirectImageTaps();
+        }
+
+        function filterMobileFoods(cat) {
+            currentFoodCategory = cat;
+            document.querySelectorAll('.food-pill').forEach(btn => {
+                if (btn.dataset.foodPill === cat) {
+                    btn.className = "food-pill shrink-0 px-4 py-2 rounded-full text-xs font-extrabold bg-[#D4AF37] text-black shadow-md transition";
+                } else {
+                    btn.className = "food-pill shrink-0 px-4 py-2 rounded-full text-xs font-semibold ios-card text-zinc-300 transition";
+                }
+            });
+            renderMobileFoods();
+        }
+
+        // --- 3C. RENDER 2x2 CULTURE BENTO GRID ---
+        function renderCultureBento() {
+            const grid = document.getElementById('cultureBentoGrid');
+            grid.innerHTML = CULTURE_BENTO.map(item => `
+                <div onclick="handleCultureCardTap(event, '${item.id}')" class="ios-card overflow-hidden cursor-pointer flex flex-col justify-between relative group">
+                    <div class="relative h-32 bg-zinc-900">
+                        <img data-img-key="${item.key}" src="${getImgUrl(item.key)}" alt="${item.title}"
+                             onerror="fallbackImg(this, '${item.title}')"
+                             class="w-full h-full object-cover">
+                        <button onclick="event.stopPropagation(); openPhotoCustomizer('${item.key}', '${item.title}')"
+                                class="tap-replace-badge absolute top-2 left-2 z-30 bg-[#D4AF37] text-black font-extrabold text-[9px] px-2 py-1 rounded-full shadow">
+                            Replace
+                        </button>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#070709] via-black/30 to-transparent"></div>
+                        <div class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-black/60 backdrop-blur-md border border-white/15 flex items-center justify-center text-[#D4AF37]">
+                            <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                    <div class="p-3.5 pt-2">
+                        <h3 class="font-display font-extrabold text-sm text-white">${item.title}</h3>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 line-clamp-1">${item.subtitle}</p>
+                        <div class="mt-2.5 flex items-center justify-between text-[10px] font-bold text-[#D4AF37]">
+                            <span>Tap to Read</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleCultureCardTap(e, id) {
+            if (isEditPhotosMode) return;
+            const item = CULTURE_BENTO.find(c => c.id === id);
+            if (!item) return;
+
+            const sheetBody = document.getElementById('bottomSheetBody');
+            sheetBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="relative h-48 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10">
+                        <img src="${getImgUrl(item.key)}" alt="${item.title}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-3 left-3.5 right-3.5">
+                            <span class="px-2.5 py-0.5 rounded-full bg-[#D4AF37] text-black font-extrabold text-[10px] uppercase">${item.subtitle}</span>
+                            <h3 class="font-display font-extrabold text-2xl text-white mt-1">${item.title}</h3>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-xs text-amber-200 font-medium">
+                        ${item.quote}
+                    </div>
+                    <p class="text-xs sm:text-sm text-zinc-200 leading-relaxed">${item.fullStory}</p>
+                    <div class="space-y-2 pt-1">
+                        ${item.bullets.map(b => `
+                            <div class="flex items-start gap-2.5 text-xs text-zinc-300">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#10B981] shrink-0 mt-0.5"></i>
+                                <span>${b}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button onclick="closeBottomSheet()" class="w-full py-3 rounded-2xl bg-white/10 text-white font-bold text-xs">
+                        Close Story
+                    </button>
+                </div>
+            `;
+            openBottomSheet();
+            lucide.createIcons();
+        }
+
+        // --- 3D. RENDER SINGERS & ARTISTS HORIZONTAL CARDS ---
+        function renderArtistsCarousel() {
+            const container = document.getElementById('artistsCarousel');
+            container.innerHTML = ARTISTS_DATA.map(artist => `
+                <div class="snap-center shrink-0 w-[78%] ios-card p-3.5 flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-44 rounded-2xl overflow-hidden bg-zinc-900 mb-3">
+                            <img data-img-key="${artist.key}" src="${getImgUrl(artist.key)}" alt="${artist.name}"
+                                 onerror="fallbackImg(this, '${artist.name}')"
+                                 class="w-full h-full object-cover">
+                            <button onclick="openPhotoCustomizer('${artist.key}', '${artist.name}')"
+                                    class="tap-replace-badge absolute top-2.5 left-2.5 z-30 bg-[#D4AF37] text-black font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow">
+                                Replace (${artist.key.split('.')[1]})
+                            </button>
+                            <div class="absolute bottom-2 left-2.5 px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-semibold text-amber-300">
+                                ${artist.era}
+                            </div>
+                        </div>
+                        <h3 class="font-display font-extrabold text-base text-white">${artist.name}</h3>
+                        <div class="text-[11px] font-bold text-[#D4AF37] mb-2">${artist.role}</div>
+                        <p class="text-xs text-zinc-300 leading-relaxed">${artist.bio}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- 3E. RENDER SPORTS STACK ---
+        function renderSportsStack() {
+            const container = document.getElementById('sportsStack');
+            container.innerHTML = SPORTS_DATA.map(sport => `
+                <div class="ios-card overflow-hidden">
+                    <div class="relative h-44 bg-zinc-900">
+                        <img data-img-key="${sport.key}" src="${getImgUrl(sport.key)}" alt="${sport.title}"
+                             onerror="fallbackImg(this, '${sport.title}')"
+                             class="w-full h-full object-cover">
+                        <button onclick="openPhotoCustomizer('${sport.key}', '${sport.title}')"
+                                class="tap-replace-badge absolute top-3 left-3 z-30 bg-[#D4AF37] text-black font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow">
+                            Tap to Replace (${sport.key})
+                        </button>
+                        <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#10B981] text-black font-extrabold text-[10px]">
+                            ${sport.badge}
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#070709] via-transparent to-transparent"></div>
+                        <div class="absolute bottom-2.5 left-4 right-4">
+                            <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#D4AF37]">${sport.stat}</div>
+                            <h3 class="font-display font-extrabold text-lg text-white">${sport.title}</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-2.5">
+                        <p class="text-xs text-zinc-300 leading-relaxed">${sport.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- 3F. RENDER GREAT MILESTONES TIMELINE ---
+        function renderMilestonesTimeline() {
+            const container = document.getElementById('milestonesTimeline');
+            container.innerHTML = MILESTONES_DATA.map(m => `
+                <div class="relative ios-card p-4">
+                    <!-- Golden Node on Timeline -->
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#D4AF37] border-2 border-[#070709] shadow absolute -left-[27px] top-5"></span>
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#D4AF37]">${m.era}</span>
+                        <div class="w-7 h-7 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
+                            <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-extrabold text-base text-white mb-1.5">${m.title}</h3>
+                    <p class="text-xs text-zinc-300 leading-relaxed">${m.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * ============================================================================
+         * 4. ADMIN PIN LOCK (`12705854`) & MOBILE BOTTOM-SHEET IMAGE CUSTOMIZER
+         * ============================================================================
+         */
+        function handleAdminLockButton() {
+            if (isAdminAuthenticated) {
+                toggleEditPhotosMode();
+            } else {
+                openAdminPinKeypad();
+            }
+        }
+
+        function openAdminPinKeypad() {
+            currentPinBuffer = "";
+            const sheetBody = document.getElementById('bottomSheetBody');
+
+            sheetBody.innerHTML = `
+                <div class="space-y-4 select-none">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
+                                <i data-lucide="shield-lock" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#D4AF37]">Organizer Access Only</div>
+                                <h3 class="font-display font-extrabold text-base text-white">Enter 8-Digit Admin PIN</h3>
+                            </div>
+                        </div>
+                        <button onclick="closeBottomSheet()" class="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <p id="pinStatusMessage" class="text-center text-xs text-zinc-400">
+                        Unlock photo customization &amp; <code class="text-[#D4AF37]">SITE_IMAGES</code> export
+                    </p>
+
+                    <!-- 8-Dot iOS PIN Indicator -->
+                    <div id="pinDotsContainer" class="flex items-center justify-center gap-2.5 py-2">
+                        ${Array.from({ length: 8 }).map((_, i) => `
+                            <span data-pin-dot="${i}" class="w-3.5 h-3.5 rounded-full border border-white/30 bg-white/5 transition-all duration-150"></span>
+                        `).join('')}
+                    </div>
+
+                    <!-- iOS Style Numeric Keypad (3x4 Grid) -->
+                    <div class="grid grid-cols-3 gap-2.5 pt-1 max-w-[290px] mx-auto">
+                        ${[1,2,3,4,5,6,7,8,9].map(num => `
+                            <button onclick="pressPinDigit('${num}')" class="h-14 rounded-2xl bg-white/[0.07] hover:bg-white/[0.12] active:bg-[#D4AF37] active:text-black border border-white/10 font-display font-extrabold text-xl text-white transition flex items-center justify-center shadow">
+                                ${num}
+                            </button>
+                        `).join('')}
+                        <button onclick="clearPinDigits()" class="h-14 rounded-2xl bg-white/[0.04] active:bg-white/15 border border-white/10 font-semibold text-xs text-zinc-400 transition flex items-center justify-center">
+                            Clear
+                        </button>
+                        <button onclick="pressPinDigit('0')" class="h-14 rounded-2xl bg-white/[0.07] hover:bg-white/[0.12] active:bg-[#D4AF37] active:text-black border border-white/10 font-display font-extrabold text-xl text-white transition flex items-center justify-center shadow">
+                            0
+                        </button>
+                        <button onclick="backspacePinDigit()" class="h-14 rounded-2xl bg-white/[0.04] active:bg-white/15 border border-white/10 text-zinc-300 transition flex items-center justify-center">
+                            <i data-lucide="delete" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            openBottomSheet();
+            lucide.createIcons();
+        }
+
+        function updatePinDotsUI(isError = false) {
+            const dots = document.querySelectorAll('[data-pin-dot]');
+            dots.forEach((dot, idx) => {
+                if (isError) {
+                    dot.className = "w-3.5 h-3.5 rounded-full border border-red-400 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] transition-all duration-150";
+                } else if (idx < currentPinBuffer.length) {
+                    dot.className = "w-3.5 h-3.5 rounded-full border border-[#D4AF37] bg-[#D4AF37] scale-110 shadow-[0_0_10px_rgba(212,175,55,0.8)] transition-all duration-150";
+                } else {
+                    dot.className = "w-3.5 h-3.5 rounded-full border border-white/30 bg-white/5 transition-all duration-150";
+                }
+            });
+        }
+
+        function pressPinDigit(digit) {
+            if (currentPinBuffer.length >= 8) return;
+            currentPinBuffer += String(digit);
+            updatePinDotsUI(false);
+
+            if (currentPinBuffer.length === 8) {
+                setTimeout(verifyAdminPin, 120);
+            }
+        }
+
+        function backspacePinDigit() {
+            if (currentPinBuffer.length > 0) {
+                currentPinBuffer = currentPinBuffer.slice(0, -1);
+                updatePinDotsUI(false);
+            }
+        }
+
+        function clearPinDigits() {
+            currentPinBuffer = "";
+            updatePinDotsUI(false);
+        }
+
+        function verifyAdminPin() {
+            if (currentPinBuffer === ADMIN_SECRET_PIN) {
+                isAdminAuthenticated = true;
+                closeBottomSheet();
+                enableAdminEditModeUI(true);
+            } else {
+                const dotsWrap = document.getElementById('pinDotsContainer');
+                const msg = document.getElementById('pinStatusMessage');
+                updatePinDotsUI(true);
+                if (dotsWrap) {
+                    dotsWrap.classList.remove('pin-shake');
+                    void dotsWrap.offsetWidth;
+                    dotsWrap.classList.add('pin-shake');
+                }
+                if (msg) {
+                    msg.textContent = "Invalid Admin PIN • Please try again";
+                    msg.className = "text-center text-xs font-bold text-red-400";
+                }
+                setTimeout(() => {
+                    currentPinBuffer = "";
+                    updatePinDotsUI(false);
+                }, 550);
+            }
+        }
+
+        function enableAdminEditModeUI(state) {
+            isEditPhotosMode = state;
+            document.body.classList.toggle('edit-photos-mode', isEditPhotosMode);
+            document.getElementById('editModeBanner').classList.toggle('hidden', !isEditPhotosMode);
+
+            const footerExportBtn = document.getElementById('footerExportConfigBtn');
+            if (footerExportBtn) {
+                footerExportBtn.classList.toggle('hidden', !isEditPhotosMode);
+                footerExportBtn.classList.toggle('flex', isEditPhotosMode);
+            }
+
+            const lockBtn = document.getElementById('topAdminLockBtn');
+            if (isEditPhotosMode) {
+                lockBtn.className = "w-8 h-8 rounded-full bg-[#D4AF37] text-black flex items-center justify-center shadow-lg active:scale-90 transition";
+                lockBtn.innerHTML = `<i data-lucide="unlock" class="w-3.5 h-3.5"></i>`;
+            } else {
+                lockBtn.className = "w-8 h-8 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-500 hover:text-zinc-300 active:scale-90 transition";
+                lockBtn.innerHTML = `<i data-lucide="lock" class="w-3.5 h-3.5"></i>`;
+            }
+            lucide.createIcons();
+        }
+
+        function toggleEditPhotosMode() {
+            if (!isAdminAuthenticated) {
+                openAdminPinKeypad();
+                return;
+            }
+            enableAdminEditModeUI(!isEditPhotosMode);
+        }
+
+        function lockAdminSession() {
+            isAdminAuthenticated = false;
+            currentPinBuffer = "";
+            enableAdminEditModeUI(false);
+        }
+
+        function bindDirectImageTaps() {
+            document.querySelectorAll('[data-img-key]').forEach(img => {
+                img.onclick = (e) => {
+                    if (!isEditPhotosMode || !isAdminAuthenticated) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const key = img.getAttribute('data-img-key');
+                    openPhotoCustomizer(key, img.alt || key);
+                };
+            });
+        }
+
+        function openPhotoCustomizer(keyPath, label) {
+            if (!isAdminAuthenticated) {
+                openAdminPinKeypad();
+                return;
+            }
+            activeCustomizingKey = keyPath;
+            const currentUrl = getImgUrl(keyPath);
+            const sheetBody = document.getElementById('bottomSheetBody');
+
+            sheetBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#D4AF37]">Mobile Image Customizer</div>
+                            <h3 class="font-display font-extrabold text-lg text-white">${label}</h3>
+                            <div class="text-[11px] text-zinc-400 font-mono">SITE_IMAGES.${keyPath}</div>
+                        </div>
+                        <button onclick="closeBottomSheet()" class="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="h-40 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10">
+                        <img id="sheetPreviewImg" src="${currentUrl}" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Option 1: Pick from Phone Camera Roll -->
+                    <button onclick="document.getElementById('cameraRollInput').click()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg">
+                        <i data-lucide="image-plus" class="w-4 h-4"></i>
+                        <span>Choose Photo from Phone Camera Roll</span>
+                    </button>
+
+                    <!-- Option 2: Paste Image URL or Local Path -->
+                    <div class="space-y-1.5">
+                        <label class="text-[11px] font-semibold text-zinc-300">Or Paste Image URL / Project Path (e.g. <code class="text-[#D4AF37]">./images/my-photo.jpg</code>):</label>
+                        <div class="flex gap-2">
+                            <input id="customUrlInput" type="text" value="${currentUrl.startsWith('data:') ? '' : currentUrl}" placeholder="https://... or ./images/photo.jpg"
+                                   class="flex-1 px-3.5 py-2.5 rounded-xl bg-black border border-white/15 text-xs text-white focus:outline-none focus:border-[#D4AF37]">
+                            <button onclick="applyCustomUrlInput()" class="px-4 py-2.5 rounded-xl bg-white/15 text-white font-bold text-xs">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-white/10 flex justify-between items-center">
+                        <button onclick="openExportCodeSheet()" class="text-xs font-bold text-[#D4AF37] underline">
+                            Copy Updated SITE_IMAGES Code
+                        </button>
+                        <button onclick="closeBottomSheet()" class="px-4 py-2 rounded-xl bg-white/5 text-xs text-zinc-300">
+                            Done
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            openBottomSheet();
+            lucide.createIcons();
+        }
+
+        function applyCustomUrlInput() {
+            const val = document.getElementById('customUrlInput')?.value.trim();
+            if (!val || !activeCustomizingKey) return;
+            updateImageEverywhere(activeCustomizingKey, val);
+            closeBottomSheet();
+        }
+
+        document.getElementById('cameraRollInput').addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file || !activeCustomizingKey) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const dataUrl = evt.target.result;
+                updateImageEverywhere(activeCustomizingKey, dataUrl);
+                const preview = document.getElementById('sheetPreviewImg');
+                if (preview) preview.src = dataUrl;
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        });
+
+        function updateImageEverywhere(keyPath, newUrl) {
+            setImgUrl(keyPath, newUrl);
+            document.querySelectorAll(`[data-img-key="${keyPath}"]`).forEach(img => {
+                img.src = newUrl;
+            });
+        }
+
+        function openExportCodeSheet() {
+            if (!isAdminAuthenticated) {
+                openAdminPinKeypad();
+                return;
+            }
+            const codeString = `const SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 2)};`;
+            const sheetBody = document.getElementById('bottomSheetBody');
+            sheetBody.innerHTML = `
+                <div class="space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#10B981]">AI Web Builder Ready</div>
+                            <h3 class="font-display font-extrabold text-lg text-white">Updated <code class="text-[#D4AF37]">SITE_IMAGES</code> Config</h3>
+                        </div>
+                        <button onclick="closeBottomSheet()" class="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-zinc-300">
+                        Copy and paste this object at the top of your script to permanently save your image paths:
+                    </p>
+                    <pre class="bg-black border border-white/10 rounded-2xl p-3.5 text-[11px] text-emerald-300 font-mono overflow-x-auto max-h-60 select-all">${codeString.replace(/</g, '&lt;')}</pre>
+                    <button onclick="copySiteImagesToClipboard()" id="copyCodeSheetBtn" class="w-full py-3.5 rounded-2xl bg-[#D4AF37] text-black font-extrabold text-xs">
+                        Copy SITE_IMAGES Code
+                    </button>
+                </div>
+            `;
+            openBottomSheet();
+            lucide.createIcons();
+        }
+
+        function copySiteImagesToClipboard() {
+            const codeString = `const SITE_IMAGES = ${JSON.stringify(SITE_IMAGES, null, 2)};`;
+            const temp = document.createElement('textarea');
+            temp.value = codeString;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            const btn = document.getElementById('copyCodeSheetBtn');
+            if (btn) btn.textContent = 'Copied to Clipboard!';
+        }
+
+        /**
+         * ============================================================================
+         * 5. PHOTO ZOOM MODAL & QR BOOTH PASS SHEET
+         * ============================================================================
+         */
+        function openImageZoomModal(keyPath, title, caption) {
+            if (isEditPhotosMode) {
+                openPhotoCustomizer(keyPath, title);
+                return;
+            }
+            const sheetBody = document.getElementById('bottomSheetBody');
+            sheetBody.innerHTML = `
+                <div class="space-y-3.5">
+                    <div class="rounded-2xl overflow-hidden bg-black border border-white/10">
+                        <img src="${getImgUrl(keyPath)}" alt="${title}" class="w-full max-h-[55vh] object-contain mx-auto">
+                    </div>
+                    <h3 class="font-display font-extrabold text-lg text-white">${title}</h3>
+                    <p class="text-xs text-zinc-300 leading-relaxed">${caption}</p>
+                    <button onclick="closeBottomSheet()" class="w-full py-3 rounded-2xl bg-white/10 text-white font-bold text-xs">
+                        Close Preview
+                    </button>
+                </div>
+            `;
+            openBottomSheet();
+        }
+
+        function openSharePassSheet() {
+            const pageUrl = window.location.href;
+            const sheetBody = document.getElementById('bottomSheetBody');
+            sheetBody.innerHTML = `
+                <div class="text-center space-y-4">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/15 text-[#10B981] text-[10px] font-extrabold uppercase">
+                        <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> University Culture Day Pass
+                    </div>
+                    <h3 class="font-display font-extrabold text-xl text-white">Afghanistan Booth QR Pass</h3>
+                    <p class="text-xs text-zinc-400">
+                        Let classmates scan this QR code with their phone camera to open this mobile cultural guide:
+                    </p>
+                    <!-- Clean SVG Stylized QR Representation -->
+                    <div class="w-48 h-48 mx-auto rounded-3xl bg-white p-4 shadow-2xl flex items-center justify-center">
+                        <svg viewBox="0 0 100 100" class="w-full h-full text-black" fill="currentColor">
+                            <path d="M5,5 h30 v30 h-30 z M12,12 v16 h16 v-16 z M17,17 h6 v6 h-6 z"/>
+                            <path d="M65,5 h30 v30 h-30 z M72,12 v16 h16 v-16 z M77,17 h6 v6 h-6 z"/>
+                            <path d="M5,65 h30 v30 h-30 z M12,72 v16 h16 v-16 z M17,77 h6 v6 h-6 z"/>
+                            <rect x="42" y="8" width="7" height="7"/><rect x="52" y="15" width="7" height="14"/>
+                            <rect x="42" y="25" width="7" height="12"/><rect x="8" y="42" width="14" height="7"/>
+                            <rect x="28" y="42" width="18" height="7"/><rect x="52" y="42" width="14" height="7"/>
+                            <rect x="74" y="42" width="18" height="7"/><rect x="42" y="54" width="10" height="10" fill="#D4AF37"/>
+                            <rect x="60" y="56" width="8" height="16"/><rect x="75" y="56" width="16" height="8"/>
+                            <rect x="42" y="72" width="12" height="8"/><rect x="58" y="78" width="16" height="14"/>
+                            <rect x="80" y="70" width="12" height="22"/>
+                        </svg>
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="copyPageLink('${pageUrl}')" id="copyPassLinkBtn" class="flex-1 py-3 rounded-2xl bg-[#D4AF37] text-black font-extrabold text-xs">
+                            Copy Page Link
+                        </button>
+                        <button onclick="closeBottomSheet()" class="px-5 py-3 rounded-2xl bg-white/10 text-white font-bold text-xs">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            openBottomSheet();
+            lucide.createIcons();
+        }
+
+        function copyPageLink(url) {
+            const temp = document.createElement('textarea');
+            temp.value = url;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            const btn = document.getElementById('copyPassLinkBtn');
+            if (btn) btn.textContent = 'Link Copied!';
+        }
+
+        function openBottomSheet() {
+            document.getElementById('mobileBottomSheet').classList.add('open');
+        }
+
+        function closeBottomSheet() {
+            document.getElementById('mobileBottomSheet').classList.remove('open');
+        }
+
+        function toggleHistoryReadMore() {
+            const block = document.getElementById('historyExpandableText');
+            const label = document.getElementById('historyReadMoreLabel');
+            const icon = document.getElementById('historyReadMoreIcon');
+            const isHidden = block.classList.contains('hidden');
+            block.classList.toggle('hidden', !isHidden);
+            label.textContent = isHidden ? 'Show Compact Summary' : 'Read Complete Historical Story';
+            icon.setAttribute('data-lucide', isHidden ? 'chevron-up' : 'chevron-down');
+            lucide.createIcons();
+        }
+
+        /**
+         * ============================================================================
+         * 6. WEB AUDIO API: PLAYABLE AFGHAN RUBAB FOLK MELODY SYNTHESIZER
+         * ============================================================================
+         */
+        let audioCtx = null;
+        let isRubabPlaying = false;
+        let rubabInterval = null;
+
+        // Traditional Afghan Rag Bairami scale notes (Hz)
+        const RUBAB_SCALE = [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00];
+
+        function ensureAudioCtx() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function pluckSingleString(freq) {
+            ensureAudioCtx();
+            const now = audioCtx.currentTime;
+            const mainOsc = audioCtx.createOscillator();
+            const droneOsc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            mainOsc.type = 'triangle';
+            droneOsc.type = 'sine';
+            mainOsc.frequency.setValueAtTime(freq, now);
+            droneOsc.frequency.setValueAtTime(freq / 2, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(0.16, now + 0.025);
+            gain.gain.exponentialRampToValueAtTime(0.0008, now + 1.65);
+
+            mainOsc.connect(gain);
+            droneOsc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            mainOsc.start(now);
+            droneOsc.start(now);
+            mainOsc.stop(now + 1.7);
+            droneOsc.stop(now + 1.7);
+        }
+
+        function toggleRubabAudio() {
+            ensureAudioCtx();
+            isRubabPlaying = !isRubabPlaying;
+
+            const topEq = document.getElementById('topEqualizer');
+            const topText = document.getElementById('topAudioText');
+            const cardLabel = document.getElementById('playerCardLabel');
+            const cardIcon = document.getElementById('playerCardIcon');
+
+            if (isRubabPlaying) {
+                topEq.classList.add('playing');
+                topText.textContent = 'Playing';
+                cardLabel.textContent = 'Pause Rubab';
+                cardIcon.setAttribute('data-lucide', 'pause');
+                lucide.createIcons();
+
+                const folkMelody = [0, 2, 3, 4, 3, 2, 1, 0, 4, 6, 5, 4, 3, 2];
+                let step = 0;
+                pluckSingleString(RUBAB_SCALE[0]);
+                rubabInterval = setInterval(() => {
+                    pluckSingleString(RUBAB_SCALE[folkMelody[step % folkMelody.length]]);
+                    step++;
+                }, 620);
+            } else {
+                clearInterval(rubabInterval);
+                topEq.classList.remove('playing');
+                topText.textContent = 'Rubab';
+                cardLabel.textContent = 'Play Folk Melody';
+                cardIcon.setAttribute('data-lucide', 'play');
+                lucide.createIcons();
+            }
+        }
+
+        /**
+         * ============================================================================
+         * 7. INITIALIZE MOBILE EXPERIENCE & ACTIVE BOTTOM DOCK SPY
+         * ============================================================================
+         */
+        window.onload = function() {
+            initStaticMobileImages();
+            renderLandmarksCarousel();
+            renderMobileFoods();
+            renderCultureBento();
+            renderArtistsCarousel();
+            renderSportsStack();
+            renderMilestonesTimeline();
+            lucide.createIcons();
+            bindDirectImageTaps();
+
+            // Active Section Observer for Bottom iOS Dock
+            const sections = document.querySelectorAll('[data-section]');
+            const dockTabs = document.querySelectorAll('.dock-tab');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('data-section');
+                        dockTabs.forEach(tab => {
+                            const active = tab.getAttribute('data-nav-target') === id;
+                            tab.className = `dock-tab flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition ${active ? 'text-[#D4AF37] bg-white/[0.07]' : 'text-zinc-400 hover:text-white'}`;
+                        });
+                    }
+                });
+            }, { threshold: 0.25 });
+
+            sections.forEach(s => observer.observe(s));
+        };
+    </script>
+</body>
+</html>
